@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
-
+#include <Rule.h>
 class Rule {
 public:
     std::string pattern;
@@ -33,4 +33,5 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const PostMachine& pm);
     friend std::istream& operator>>(std::istream& is, PostMachine& pm);
 };
+
 
