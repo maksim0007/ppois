@@ -3,7 +3,8 @@
 #include <vector>
 #include <iostream>
 
-struct Rule {
+class Rule {
+public:
     std::string pattern;
     std::string replace;
     bool moveRight = true;
@@ -32,3 +33,4 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const PostMachine& pm);
     friend std::istream& operator>>(std::istream& is, PostMachine& pm);
 };
+
