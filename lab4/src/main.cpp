@@ -21,7 +21,7 @@ int main() {
     std::cout << "Before:\n";
     for (const auto& p : people) std::cout << p << "\n";
 
-    insertion_sort(people, [](const Person& a, const Person& b) { return a < b; });
+    InsertionSort{}(people, [](const Person& a, const Person& b) { return a < b; });
 
     std::cout << "\nAfter insertion_sort:\n";
     for (const auto& p : people) std::cout << p << "\n";
@@ -30,7 +30,11 @@ int main() {
         Person("Fay", 25), Person("Gus", 35), Person("Hank", 25), Person("Ivy", 28)
     };
     int min_age = 25, max_age = 35;
-    counting_sort(people2, [](const Person& p) { return p.age(); }, min_age, max_age);
+
+    CountingSort{}(people2,
+        [](const Person& p) { return p.age(); },
+        min_age, max_age
+    );
 
     std::cout << "\nAfter counting_sort by age:\n";
     for (const auto& p : people2) std::cout << p << "\n";
@@ -57,7 +61,7 @@ int main() {
     std::cout << "\nIterate edges:\n";
     auto edges = g.get_all_edges();
     for (const auto& edge : edges) {
-        std::cout << edge.u << " - " << edge.v << "\n";
+        std::cout << edge.first() << " - " << edge.second() << "\n";
     }
 
     return 0;
