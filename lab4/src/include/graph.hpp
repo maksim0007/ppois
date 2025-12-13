@@ -27,17 +27,22 @@ namespace lab {
         using adjacency_list_type = std::unordered_map<T, std::vector<T>>;
         using size_type = std::size_t;
 
-        struct Edge {
-            T u;
-            T v;
+        class Edge {
+        private:
+            T u_;
+            T v_;
 
-            Edge(const T& first, const T& second) : u(first), v(second) {}
+        public:
+            Edge(const T& first, const T& second) : u_(first), v_(second) {}
+
+            const T& first() const noexcept { return u_; }
+            const T& second() const noexcept { return v_; }
 
             bool operator==(const Edge& other) const {
                 if constexpr (traits_type::is_directed) {
-                    return u == other.u && v == other.v;
+                    return u_ == other.u_ && v_ == other.v_;
                 } else {
-                    return (u == other.u && v == other.v) || (u == other.v && v == other.u);
+                    return (u_ == other.u_ && v_ == other.v_) || (u_ == other.v_ && v_ == other.u_);
                 }
             }
         };
@@ -72,9 +77,9 @@ namespace lab {
             auto it = adj_.find(v);
             if (it == adj_.end()) throw std::out_of_range("vertex not found");
 
-            // Удаляем все ребра, связанные с этой вершиной
+            // Г“Г¤Г Г«ГїГҐГ¬ ГўГ±ГҐ Г°ГҐГЎГ°Г , Г±ГўГїГ§Г Г­Г­Г»ГҐ Г± ГЅГІГ®Г© ГўГҐГ°ГёГЁГ­Г®Г©
             for (const auto& neighbor : it->second) {
-                if (neighbor == v) continue; // Пропускаем петлю
+                if (neighbor == v) continue; // ГЏГ°Г®ГЇГіГ±ГЄГ ГҐГ¬ ГЇГҐГІГ«Гѕ
 
                 auto& neighbors_list = adj_.at(neighbor);
                 auto pos = std::find(neighbors_list.begin(), neighbors_list.end(), v);
@@ -84,7 +89,7 @@ namespace lab {
                 }
             }
 
-            // Удаляем петли
+            // Г“Г¤Г Г«ГїГҐГ¬ ГЇГҐГІГ«ГЁ
             size_t loop_count = 0;
             for (const auto& neighbor : it->second) {
                 if (neighbor == v) {
@@ -357,7 +362,7 @@ namespace lab {
                     if constexpr (traits_type::is_directed) {
                         edges.emplace_back(vertex, neighbor);
                     } else {
-                        // Для неориентированного графа добавляем каждое ребро только один раз
+                        // Г„Г«Гї Г­ГҐГ®Г°ГЁГҐГ­ГІГЁГ°Г®ГўГ Г­Г­Г®ГЈГ® ГЈГ°Г ГґГ  Г¤Г®ГЎГ ГўГ«ГїГҐГ¬ ГЄГ Г¦Г¤Г®ГҐ Г°ГҐГЎГ°Г® ГІГ®Г«ГјГЄГ® Г®Г¤ГЁГ­ Г°Г Г§
                         T first = std::min(vertex, neighbor);
                         T second = std::max(vertex, neighbor);
 
@@ -395,3 +400,4 @@ namespace lab {
 } // namespace lab
 
 #endif // GRAPH_HPP
+
