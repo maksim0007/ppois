@@ -14,9 +14,11 @@
 namespace lab {
 
     template<typename T>
-    struct DefaultGraphTraits {
-        using value_type = T;
-        static constexpr bool is_directed = false;
+   template<typename T>
+   class DefaultGraphTraits {
+   public:
+     using value_type = T;
+     static constexpr bool is_directed = false;
     };
 
     template<typename T, typename Traits = DefaultGraphTraits<T>>
@@ -400,4 +402,5 @@ namespace lab {
 } // namespace lab
 
 #endif // GRAPH_HPP
+
 
