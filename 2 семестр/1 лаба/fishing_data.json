@@ -1,0 +1,117 @@
+{
+    "vessels": [
+        {
+            "id": 1,
+            "name": "bmw",
+            "capacity": 525.0,
+            "cargo": [],
+            "net": {
+                "id": 1,
+                "name": "wow",
+                "capacity": 100.0,
+                "mesh_size": 10
+            },
+            "crew": [
+                {
+                    "id": 1,
+                    "name": "makson",
+                    "role": "Матрос"
+                },
+                {
+                    "id": 1,
+                    "name": "makson",
+                    "role": "Матрос"
+                },
+                {
+                    "id": 1,
+                    "name": "makson",
+                    "role": "Матрос"
+                },
+                {
+                    "id": 1,
+                    "name": "makson",
+                    "role": "Матрос"
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "name": "Виктория",
+            "capacity": 500.0,
+            "cargo": [],
+            "net": null,
+            "crew": []
+        },
+        {
+            "id": 3,
+            "name": "Виктория",
+            "capacity": 500.0,
+            "cargo": [],
+            "net": null,
+            "crew": []
+        },
+        {
+            "id": 4,
+            "name": "Виктория",
+            "capacity": 500.0,
+            "cargo": [],
+            "net": null,
+            "crew": []
+        }
+    ],
+    "fishermen": [
+        {
+            "id": 1,
+            "name": "makson",
+            "role": "Матрос"
+        },
+        {
+            "id": 2,
+            "name": "Борис",
+            "role": "Матрос"
+        },
+        {
+            "id": 3,
+            "name": "Борис",
+            "role": "Матрос"
+        },
+        {
+            "id": 4,
+            "name": "Борис",
+            "role": "Матрос"
+        }
+    ],
+    "nets": [
+        {
+            "id": 1,
+            "name": "wow",
+            "capacity": 100.0,
+            "mesh_size": 10
+        },
+        {
+            "id": 2,
+            "name": "Трал",
+            "capacity": 200.0,
+            "mesh_size": 10
+        },
+        {
+            "id": 3,
+            "name": "Трал",
+            "capacity": 200.0,
+            "mesh_size": 10
+        },
+        {
+            "id": 4,
+            "name": "Трал",
+            "capacity": 200.0,
+            "mesh_size": 10
+        }
+    ],
+    "cold_storage": {
+        "capacity": 1000.0,
+        "storage": []
+    },
+    "market": {
+        "balance": 16004.678332498464
+    }
+}
