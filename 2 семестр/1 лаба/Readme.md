@@ -25,127 +25,106 @@
 
 ```mermaid
 classDiagram
-    class FishType {
-        <<enumeration>>
-        SALMON
-        COD
-        TUNA
-        HERRING
-    }
-
-    class FishStatus {
-        <<enumeration>>
-        FRESH
-        PROCESSED
-    }
-
-    class Fish {
-        +String species
-        +Float weight
-        +String status
-        +Float price_per_kg
+    class Рыба {
+        +вид: str
+        +вес: float
+        +статус: str
+        +цена_за_кг: float
         +to_dict() Dict
     }
-
-    class Net {
-        +Int id
-        +String name
-        +Float capacity
-        +Int mesh_size
+    
+    class Сеть {
+        +id: int
+        +название: str
+        +вместимость: float
+        +размер_ячейки: int
         +to_dict() Dict
     }
-
-    class Fisherman {
-        +Int id
-        +String name
-        +String role
+    
+    class Рыбак {
+        +id: int
+        +имя: str
+        +роль: str
         +to_dict() Dict
     }
-
-    class Vessel {
-        +Int id
-        +String name
-        +Float capacity
-        +List cargo
-        +Net net
-        +List crew
-        +equip_net(Net)
-        +add_crew_member(Fisherman)
-        +catch_fish() List
+    
+    class Судно {
+        +id: int
+        +название: str
+        +вместимость: float
+        +груз: List~Рыба~
+        +сеть: Сеть
+        +команда: List~Рыбак~
+        +equip_net(net)
+        +add_crew_member(fisherman)
+        +catch_fish() List~Рыба~
         +to_dict() Dict
-        +from_dict(Dict) Vessel$
+        +from_dict() Судно$
     }
-
-    class ColdStorage {
-        +Float capacity
-        +List storage
-        +store_fish(List)
-        +process_all_fish() Int
+    
+    class Хладокомбинат {
+        +вместимость: float
+        +склад: List~Рыба~
+        +store_fish(fish_batch)
+        +process_all_fish() int
         +to_dict() Dict
-        +from_dict(Dict) ColdStorage$
+        +from_dict() Хладокомбинат$
     }
-
-    class FishMarket {
-        +Float balance
-        +sell_products(ColdStorage) Float
+    
+    class РыбныйРынок {
+        +баланс: float
+        +sell_products(storage) float
         +to_dict() Dict
-        +from_dict(Dict) FishMarket$
+        +from_dict() РыбныйРынок$
     }
-
-    class FishingProductionSystem {
-        +List vessels
-        +List fishermen
-        +List nets
-        +ColdStorage cold_storage
-        +FishMarket market
-        +create_vessel(String, Float)
-        +assign_crew(Int, Int)
-        +perform_fishing(Int)
-        +unload_vessel(Int)
-        +process_production()
+    
+    class СистемаУправления {
+        +суда: List~Судно~
+        +рыбаки: List~Рыбак~
+        +сети: List~Сеть~
+        +хладокомбинат: Хладокомбинат
+        +рынок: РыбныйРынок
+        +create_vessel()
+        +perform_fishing()
         +sell_production()
-        +save_state(String)
-        +load_state(String)
+        +save_state()
+        +load_state()
     }
 
-    FishingProductionSystem *-- Vessel : Управляет
-    FishingProductionSystem *-- ColdStorage : Включает
-    FishingProductionSystem *-- FishMarket : Включает
-    Vessel o-- Fisherman : Команда
-    Vessel o-- Net : Оснащение
-    Vessel *-- Fish : Груз
-    ColdStorage *-- Fish : Хранит
+    Судно o-- Рыба : содержит (груз)
+    Судно o-- Сеть : оснащено
+    Судно o-- Рыбак : команда
+    Хладокомбинат o-- Рыба : хранит
+    СистемаУправления *-- Судно
+    СистемаУправления *-- Рыбак
+    СистемаУправления *-- Сеть
+    СистемаУправления *-- Хладокомбинат
+    СистемаУправления *-- РыбныйРынок
 ```
 ### 2.Диаграмма состояний
 Описывает жизненный цикл производственного процесса и переходы между состояниями системы.
 ```mermaid
 stateDiagram-v2
-    [*] --> Ожидание : Запуск системы
-
-    state Ожидание {
-        [*] --> Подготовка
-        Подготовка --> Готовность : Назначены сеть и команда
-    }
-
-    Ожидание --> Вылов : Команда fish
+    [*] --> ЗапускПрограммы
+    ЗапускПрограммы --> АвтозагрузкаДанных : load_state()
+    АвтозагрузкаДанных --> ГлавныйЦикл
     
-    state Вылов {
-        [*] --> Заброс_Сети
-        Заброс_Сети --> Ошибка : Нет сети или команды
-        Заброс_Сети --> Загрузка_Трюма : Успешный улов
-        Загрузка_Трюма --> Перегруз_Судна : Превышена вместимость
+    state ГлавныйЦикл {
+        [*] --> ОжиданиеВвода
+        ОжиданиеВвода --> ОбработкаКоманды : Ввод пользователя
+        
+        state ОбработкаКоманды {
+            direction TB
+            ПокупкаИНаём : add_vessel / add_fisher / add_net
+            Назначение : assign / equip
+            Производство : fish / unload / process
+            Коммерция : sell
+            Системные : status / save / load / help
+        }
+        
+        ОбработкаКоманды --> ВыводРезультатаИлиОшибки
+        ВыводРезультатаИлиОшибки --> ОжиданиеВвода
     }
-
-    Вылов --> Ожидание : Возврат в порт
-    Вылов --> Разгрузка : Команда unload
-
-    Разгрузка --> Хранение : Перемещение на склад
     
-    state Хранение {
-        [*] --> Свежая_Рыба
-        Свежая_Рыба --> Переработанная_Рыба : Команда process
-    }
-
-    Хранение --> Продажа : Команда sell
-
-    Продажа --> Ожидание : Прибыль получена
+    ГлавныйЦикл --> ВыходИзПрограммы : Команда "exit"
+    ВыходИзПрограммы --> [*]
