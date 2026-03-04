@@ -139,44 +139,43 @@ classDiagram
 ### 2.Диаграмма состояний
 Описывает жизненный цикл производственного процесса и переходы между состояниями системы.
 ```mermaid
-flowchart TD
-    Start([Запуск программы]) --> Init[Инициализация Системы Управления]
-    Init --> Load[Автозагрузка данных: load_state]
-    
-    Load --> Loop{Главный цикл: while True}
+stateDiagram-v2
+    direction TB
 
-    Loop --> Input[/Ожидание ввода команды/]
-    Input --> CheckCmd{Проверка команды}
-
-    CheckCmd -->|help| CmdHelp[Вывод справки]
-    CheckCmd -->|status| CmdStatus[Вывод статуса]
-    CheckCmd -->|add_vessel / add_fisher / add_net| CmdAdd[Создание сущности]
-    CheckCmd -->|assign / equip| CmdEquip[Назначение персонала / Экипировка]
-    CheckCmd -->|fish| CmdFish[Ловля рыбы: catch_fish]
-    CheckCmd -->|unload| CmdUnload[Выгрузка на склад: store_fish]
-    CheckCmd -->|process| CmdProcess[Переработка: process_all_fish]
-    CheckCmd -->|sell| CmdSell[Продажа: sell_products]
-    CheckCmd -->|save / load| CmdState[Сохранение / Загрузка состояния]
+    [*] --> Инициализация : Запуск программы
+    Инициализация --> ЗагрузкаДанных : load_state()
     
-    CheckCmd -->|Неизвестная команда или ошибка| CmdError[Сообщение об ошибке]
-    
-    %% Явно выделенный блок выхода
-    CheckCmd -->|exit| CmdExit[Завершение работы цикла]
+    state "Главный цикл (while True)" as MainLoop {
+        [*] --> ОжиданиеВвода : Вывод приглашения
+        ОжиданиеВвода --> Обработка : Команда введена
+        
+        state Обработка {
+            direction LR
+            [*] --> Парсинг : Разбор строки
+            Парсинг --> Валидация : Проверка аргументов
+            Валидация --> Выполнение : Успех
+            Валидация --> Ошибка : Неверные данные
+        }
 
-    %% Возврат в цикл
-    CmdHelp --> Loop
-    CmdStatus --> Loop
-    CmdAdd --> Loop
-    CmdEquip --> Loop
-    CmdFish --> Loop
-    CmdUnload --> Loop
-    CmdProcess --> Loop
-    CmdSell --> Loop
-    CmdState --> Loop
-    CmdError --> Loop
+        Обработка --> ОжиданиеВвода : Результат выведен
+    }
 
-    %% Финал
-    CmdExit --> End([Выход из программы])
-    
-    style End fill:#f99,stroke:#333,stroke-width:2px
-    style CmdExit fill:#ffcccb,stroke:#f00
+    ЗагрузкаДанных --> ГлавныйЦикл
+
+    %% Переходы для конкретных действий внутри цикла (условно)
+    state ГлавныйЦикл {
+        state "Управление флотом" as Fleet
+        state "Производство" as Production
+        state "Коммерция" as Economy
+        
+        Fleet : add_vessel, add_fisher, add_net, assign, equip
+        Production : fish, unload, process
+        Economy : sell, status
+    }
+
+    %% Выход из программы
+    ГлавныйЦикл --> Завершение : Команда "exit"
+    Завершение --> [*] : Программа закрыта
+
+    %% Оформление
+    style Завершение fill:#f96,stroke:#333,stroke-width:2px
