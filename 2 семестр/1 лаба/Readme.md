@@ -142,40 +142,26 @@ classDiagram
 stateDiagram-v2
     direction TB
 
-    [*] --> Инициализация : Запуск программы
-    Инициализация --> ЗагрузкаДанных : load_state()
-    
-    state "Главный цикл (while True)" as MainLoop {
-        [*] --> ОжиданиеВвода : Вывод приглашения
-        ОжиданиеВвода --> Обработка : Команда введена
-        
-        state Обработка {
-            direction LR
-            [*] --> Парсинг : Разбор строки
-            Парсинг --> Валидация : Проверка аргументов
-            Валидация --> Выполнение : Успех
-            Валидация --> Ошибка : Неверные данные
-        }
+    state "Инициализация" as Init
+    state "Загрузка данных" as Loading
+    state "Главный цикл" as MainLoop
+    state "Завершение работы" as ExitState
 
-        Обработка --> ОжиданиеВвода : Результат выведен
+    [*] --> Init
+    Init --> Loading : load_state()
+    Loading --> MainLoop : Цикл запущен
+
+    state MainLoop {
+        [*] --> Ожидание : input()
+        Ожидание --> Обработка : Команда введена
+        Обработка --> Ожидание : Результат выведен
     }
 
-    ЗагрузкаДанных --> ГлавныйЦикл
+    %% Переход к выходу
+    MainLoop --> ExitState : команда "exit"
+    ExitState --> [*]
 
-    %% Переходы для конкретных действий внутри цикла (условно)
-    state ГлавныйЦикл {
-        state "Управление флотом" as Fleet
-        state "Производство" as Production
-        state "Коммерция" as Economy
-        
-        Fleet : add_vessel, add_fisher, add_net, assign, equip
-        Production : fish, unload, process
-        Economy : sell, status
-    }
+    %% Применяем стили через классы, чтобы избежать лексических ошибок
+    classDef redNode fill:#f96,stroke:#333,stroke-width:2px;
+    class ExitState redNode
 
-    %% Выход из программы
-    ГлавныйЦикл --> Завершение : Команда "exit"
-    Завершение --> [*] : Программа закрыта
-
-    %% Оформление
-    style Завершение fill:#f96,stroke:#333,stroke-width:2px
